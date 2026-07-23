@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://dhpk5mejbubmd"]
+
+[ext_resource type="Script" uid="uid://bphmyw28eahuj" path="res://user_interface/people-count/person_ui.gd" id="1_coauu"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6nr4e"]
+load_path = "res://.godot/imported/person_empty_ui.png-bfd76cb2b117dbd1d6baed9578675262.ctex"
+
+[node name="PersonUI" type="Sprite2D" unique_id=1404202434]
+texture = SubResource("CompressedTexture2D_6nr4e")
+hframes = 2
+script = ExtResource("1_coauu")

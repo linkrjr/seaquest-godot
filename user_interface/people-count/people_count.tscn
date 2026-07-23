@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://c0dpm6iysl35d"]
+
+[ext_resource type="PackedScene" uid="uid://dhpk5mejbubmd" path="res://user_interface/people-count/person_ui.tscn" id="1_o0fhf"]
+
+[node name="PeopleCount" type="Node2D" unique_id=1701938823]
+
+[node name="PersonUI1" parent="." unique_id=1404202434 instance=ExtResource("1_o0fhf")]
+
+[node name="PersonUI2" parent="." unique_id=258314172 instance=ExtResource("1_o0fhf")]
+offset = Vector2(12, 0)
+order_number = 2
+
+[node name="PersonUI3" parent="." unique_id=659660654 instance=ExtResource("1_o0fhf")]
+offset = Vector2(24, 0)
+order_number = 3
+
+[node name="PersonUI4" parent="." unique_id=1405081462 instance=ExtResource("1_o0fhf")]
+offset = Vector2(36, 0)
+order_number = 4
+
+[node name="PersonUI5" parent="." unique_id=1521020015 instance=ExtResource("1_o0fhf")]
+offset = Vector2(48, 0)
+order_number = 5
+
+[node name="PersonUI6" parent="." unique_id=2110161969 instance=ExtResource("1_o0fhf")]
+offset = Vector2(60, 0)
+order_number = 6
+
+[node name="PersonUI7" parent="." unique_id=1723842337 instance=ExtResource("1_o0fhf")]
+offset = Vector2(72, 0)
+order_number = 7
