@@ -5,9 +5,88 @@
 [ext_resource type="PackedScene" uid="uid://c0dpm6iysl35d" path="res://user_interface/people-count/people_count.tscn" id="3_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://cpx156upx0xi2" path="res://enemies/enemy_spawner/enemy_spawner.tscn" id="3_lnu2h"]
 [ext_resource type="Texture2D" uid="uid://bqy0hk2swnlvw" path="res://user_interface/oxygen-bar/oxygen_bar_progress.png" id="3_p57ef"]
+[ext_resource type="Script" uid="uid://bwy64mfkook8x" path="res://scenes/game/oxygen_zone.gd" id="3_u5sy4"]
+[ext_resource type="Shader" uid="uid://w01s31sfinik" path="res://scenes/water_shader.gdshader" id="4_gee14"]
 [ext_resource type="Script" uid="uid://bv71lk26tdhu4" path="res://user_interface/oxygen-bar/oxygen_bar.gd" id="4_p57ef"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_784f0"]
+size = Vector2(262, 20)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0tnpc"]
+shader = ExtResource("4_gee14")
+shader_parameter/strength = Vector2(2, 2)
+shader_parameter/speed = 1.0
+shader_parameter/seed = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_784f0"]
+size = Vector2(400, 4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_gee14"]
+size = Vector2(400, 35)
+
+[sub_resource type="QuadMesh" id="QuadMesh_0tnpc"]
+size = Vector2(400, 40)
+
+[sub_resource type="QuadMesh" id="QuadMesh_vtaks"]
+size = Vector2(400, 75)
+
+[sub_resource type="QuadMesh" id="QuadMesh_kvpfn"]
+size = Vector2(400, 107)
+
 [node name="Game" type="Node2D" unique_id=1803417643]
+
+[node name="player" parent="." unique_id=1499196553 instance=ExtResource("1_yqjtg")]
+position = Vector2(122, 72)
+
+[node name="EnemySpawner" parent="." unique_id=397191733 instance=ExtResource("3_lnu2h")]
+position = Vector2(0, -4)
+
+[node name="OxygenZone" type="Area2D" parent="." unique_id=440407647]
+position = Vector2(128, 43)
+script = ExtResource("3_u5sy4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OxygenZone" unique_id=147363628]
+shape = SubResource("RectangleShape2D_784f0")
+
+[node name="Environment" type="Node2D" parent="." unique_id=1259690675]
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="Environment" unique_id=994545666]
+material = SubResource("ShaderMaterial_0tnpc")
+position = Vector2(127, 39)
+scale = Vector2(0.7, 1)
+mesh = SubResource("QuadMesh_784f0")
+
+[node name="MeshInstance2D2" type="MeshInstance2D" parent="Environment" unique_id=2135713667]
+modulate = Color(0.047058824, 0.9019608, 0.9490196, 1)
+z_index = -11
+material = SubResource("ShaderMaterial_0tnpc")
+position = Vector2(127, 55)
+scale = Vector2(0.7, 1)
+mesh = SubResource("QuadMesh_gee14")
+
+[node name="MeshInstance2D3" type="MeshInstance2D" parent="Environment" unique_id=263424686]
+modulate = Color(0, 0.59607846, 0.85882354, 1)
+z_index = -11
+material = SubResource("ShaderMaterial_0tnpc")
+position = Vector2(127, 65)
+scale = Vector2(0.7, 1)
+mesh = SubResource("QuadMesh_0tnpc")
+
+[node name="MeshInstance2D4" type="MeshInstance2D" parent="Environment" unique_id=426301873]
+modulate = Color(0.11764706, 0.34117648, 0.6117647, 1)
+z_index = -12
+material = SubResource("ShaderMaterial_0tnpc")
+position = Vector2(127, 107)
+scale = Vector2(0.7, 1)
+mesh = SubResource("QuadMesh_vtaks")
+
+[node name="MeshInstance2D5" type="MeshInstance2D" parent="Environment" unique_id=1447330415]
+modulate = Color(0.1254902, 0.20784314, 0.38431373, 1)
+z_index = -13
+material = SubResource("ShaderMaterial_0tnpc")
+position = Vector2(127, 178)
+scale = Vector2(0.7, 1)
+mesh = SubResource("QuadMesh_kvpfn")
 
 [node name="UserInterface" type="CanvasLayer" parent="." unique_id=1873735265]
 
@@ -33,7 +112,4 @@ texture_under = ExtResource("2_iywne")
 texture_progress = ExtResource("3_p57ef")
 script = ExtResource("4_p57ef")
 
-[node name="player" parent="." unique_id=1499196553 instance=ExtResource("1_yqjtg")]
-position = Vector2(122, 72)
-
-[node name="EnemySpawner" parent="." unique_id=397191733 instance=ExtResource("3_lnu2h")]
+[connection signal="area_entered" from="OxygenZone" to="OxygenZone" method="_on_area_entered"]
