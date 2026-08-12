@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://bwy64mfkook8x" path="res://scenes/game/oxygen_zone.gd" id="3_u5sy4"]
 [ext_resource type="Shader" uid="uid://w01s31sfinik" path="res://scenes/water_shader.gdshader" id="4_gee14"]
 [ext_resource type="Script" uid="uid://bv71lk26tdhu4" path="res://user_interface/oxygen-bar/oxygen_bar.gd" id="4_p57ef"]
+[ext_resource type="FontFile" uid="uid://dh0rv4byqqjka" path="res://user_interface/fonts/font_1.ttf" id="9_0tnpc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_784f0"]
 size = Vector2(262, 20)
@@ -36,10 +37,10 @@ size = Vector2(400, 107)
 [node name="Game" type="Node2D" unique_id=1803417643]
 
 [node name="player" parent="." unique_id=1499196553 instance=ExtResource("1_yqjtg")]
-position = Vector2(122, 72)
+position = Vector2(128, 100)
 
 [node name="EnemySpawner" parent="." unique_id=397191733 instance=ExtResource("3_lnu2h")]
-position = Vector2(0, -4)
+position = Vector2(0, 0)
 
 [node name="OxygenZone" type="Area2D" parent="." unique_id=440407647]
 position = Vector2(128, 43)
@@ -101,8 +102,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -50.0
-offset_top = -9.0
+offset_top = -19.0
 offset_right = 50.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 0
 nine_patch_stretch = true
@@ -111,5 +113,26 @@ stretch_margin_right = 4
 texture_under = ExtResource("2_iywne")
 texture_progress = ExtResource("3_p57ef")
 script = ExtResource("4_p57ef")
+
+[node name="Label" type="Label" parent="UserInterface/OxygenBar" unique_id=1401204901]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -29.5
+offset_top = -11.5
+offset_right = 29.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0.1254902, 0.08235294, 0.2, 1)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("9_0tnpc")
+theme_override_font_sizes/font_size = 8
+text = "Oxygen"
+horizontal_alignment = 1
+vertical_alignment = 2
 
 [connection signal="area_entered" from="OxygenZone" to="OxygenZone" method="_on_area_entered"]
