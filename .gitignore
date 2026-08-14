@@ -6,3 +6,4 @@
 # Export output
 /build/
 /dist/
+/images/*.png.import
