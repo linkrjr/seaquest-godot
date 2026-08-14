@@ -8,6 +8,12 @@ on:
 permissions:
   contents: write
 
+env:
+  # Must match config/features in project.godot (currently "4.7").
+  GODOT_RELEASE: "4.7.1-stable"
+  # Same version in the directory-name form Godot uses for export templates.
+  GODOT_TEMPLATE_VERSION: "4.7.1.stable"
+
 jobs:
   build-windows:
     name: Build Windows
@@ -17,26 +23,26 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "Export Windows Binary"
+        id: export
         uses: firebelley/godot-export@v5.2.0
         with:
-          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
-          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz
+          godot_executable_download_url: "https://github.com/godotengine/godot/releases/download/${{ env.GODOT_RELEASE }}/Godot_v${{ env.GODOT_RELEASE }}_linux.x86_64.zip"
+          godot_export_templates_download_url: "https://github.com/godotengine/godot/releases/download/${{ env.GODOT_RELEASE }}/Godot_v${{ env.GODOT_RELEASE }}_export_templates.tpz"
           relative_project_path: ./
           archive_output: true
           cache: true
 
       - name: Archive Windows Build
         run: |
-          cd /home/runner/.local/share/godot/builds
-          zip -r ../../../../windows-build.zip .
-          cd ../../../../
-          mv windows-build.zip seaquest-windows.zip
+          mkdir -p dist
+          mv "${{ steps.export.outputs.archive_directory }}/Windows Desktop.zip" dist/seaquest-windows.zip
 
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: seaquest
-          path: seaquest-windows.zip
+          name: seaquest-windows
+          path: dist/seaquest-windows.zip
+          if-no-files-found: error
 
   build-mac:
     name: Build macOS
@@ -47,23 +53,37 @@ jobs:
 
       - name: Setup Godot Engine
         run: |
-          curl -L -o Godot.zip https://github.com
-          unzip Godot.zip
+          curl -fL -o Godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_RELEASE}/Godot_v${GODOT_RELEASE}_macos.universal.zip"
+          unzip -q Godot.zip
           mv Godot.app /Applications/Godot.app
           rm Godot.zip
 
-      - name: Create Build Directory
-        run: mkdir -p build/mac
+      - name: Install Export Templates
+        run: |
+          curl -fL -o templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_RELEASE}/Godot_v${GODOT_RELEASE}_export_templates.tpz"
+          unzip -q templates.tpz
+          mkdir -p "$HOME/Library/Application Support/Godot/export_templates"
+          mv templates "$HOME/Library/Application Support/Godot/export_templates/${GODOT_TEMPLATE_VERSION}"
+          rm templates.tpz
+
+      - name: Import Project Resources
+        run: |
+          /Applications/Godot.app/Contents/MacOS/Godot --headless --path "$PWD" --import
 
       - name: Export macOS App
         run: |
-          /Applications/Godot.app/Contents/MacOS/Godot --headless --export-release "macOS" build/mac/seaquest.dmg
+          mkdir -p dist
+          /Applications/Godot.app/Contents/MacOS/Godot --headless --path "$PWD" \
+            --export-release "macOS" "$PWD/dist/seaquest.dmg"
 
       - name: Upload macOS Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: seaquest
-          path: /builds/mac
+          name: seaquest-mac
+          path: dist/seaquest.dmg
+          if-no-files-found: error
 
   publish-release:
     name: Publish Github Release
@@ -73,16 +93,11 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Download Windows Artifact
+      - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: seaquest-windows
-          path: ./dist
-
-      - name: Download macOS Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: seaquest-mac
+          pattern: seaquest-*
+          merge-multiple: true
           path: ./dist
 
       - name: Create Github Release
@@ -91,6 +106,7 @@ jobs:
           files: |
             ./dist/seaquest-windows.zip
             ./dist/seaquest.dmg
+          fail_on_unmatched_files: true
           draft: false
           prerelease: false
         env:
