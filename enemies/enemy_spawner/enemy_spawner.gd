@@ -10,6 +10,12 @@ var used_spawn_points = []
 const Shark = preload("res://enemies/shark/shark.tscn")
 const Person = preload("res://person/person.tscn")
 
+@onready var spawn_person_timer = $SpawnPersonTimer
+@onready var spawn_enemy_timer = $SpawnEnemyTimer
+
+func _ready() -> void:
+	GameEvent.connect("pause_enemies", Callable(self, "_pause"))
+
 func spawn_enemy() -> void:
 	var available_spawn_points = []
 	
@@ -69,3 +75,11 @@ func _on_spawn_player_timer_timeout() -> void:
 	
 	person_instance.global_position = spawn_position
 	
+	
+func _pause(pause) -> void:
+	if pause:
+		spawn_enemy_timer.stop()
+		spawn_person_timer.stop()
+	else:
+		spawn_enemy_timer.start()
+		spawn_person_timer.start()

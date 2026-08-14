@@ -9,6 +9,10 @@ func _ready() -> void:
 	GameEvent.connect("update_collected_people_count", Callable(self, "_update"))
 
 func _update():
+	frame = 0
+	if Global.saved_people_count >= 7:
+		frame = 1
+		
 	if Global.saved_people_count >= order_number:
 		texture = FULL_TEXTURE
 	else:
