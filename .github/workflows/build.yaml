@@ -19,7 +19,7 @@ jobs:
       - name: "Export Windows Binary"
         uses: firebelley/godot-export@v5.2.0
         with:
-          godot_version: 4.7.1
+          godot_version: 4.3.0
           export_preset: "Windows Desktop"
           project_dir: "."
           godot_export_args: "--headless"
