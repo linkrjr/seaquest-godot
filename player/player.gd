@@ -2,9 +2,12 @@ extends Area2D
 
 var velocity = Vector2(0, 0)
 var can_shoot = true
+var is_shooting = false
 
 enum STATES {DEFAULT, OXYGEN_REFUEL, PEOPLE_REFUEL}
 var state = STATES.DEFAULT
+
+const ROTATION_STRENGTH = 15
 
 const BULLET_OFFSET = 10
 const OXYGEN_DECREASE_SPEED = 2.5
@@ -17,6 +20,9 @@ const MAX_X_POSITION = 248
 const MIN_X_POSITION = 13
 const MAX_Y_POSITION = 200
 const MIN_Y_POSITION = OXYGEN_REFUEL_Y_POSITION
+const ObjectPiece = preload("res://particles/object_piece/object_piece.tscn")
+const PIECE_COUNT = 10
+const PieceTexture = preload("res://player/player_pieces.png")
 
 const Bullet = preload("res://player/player_bullet/playerbullet.tscn")
 
@@ -50,6 +56,7 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if state == STATES.DEFAULT:
 		movement()
+		rotate_to_movement()
 	
 	clamp_moviment()
 	GameEvent.emit_signal("camera_follow_player", global_position.y)
@@ -60,12 +67,26 @@ func process_moviment_input():
 	velocity = velocity.normalized()	
 
 func direction_follows_input():
+	if is_shooting:	return
 	if velocity.x < 0:
 		sprite.flip_h = true
 	elif velocity.x > 0:
 		sprite.flip_h = false
 		
-func process_shooting():
+func rotate_to_movement():
+	var rotation_target = 0
+	
+	if velocity.y == 0:
+		rotation_target = velocity.x * ROTATION_STRENGTH
+	else:
+		if sprite.flip_h:
+			rotation_target = -velocity.y * ROTATION_STRENGTH
+		else:
+			rotation_target = velocity.y * ROTATION_STRENGTH
+	
+	rotation_degrees = lerp(rotation_degrees, rotation_target, 15 * get_physics_process_delta_time())
+	
+func process_shooting():	
 	if Input.is_action_pressed("shoot") and can_shoot:
 		var bullet_instance = Bullet.instantiate()
 		get_tree().current_scene.add_child(bullet_instance)
@@ -80,6 +101,8 @@ func process_shooting():
 		
 		can_shoot = false
 		reload_timer.start()
+
+	is_shooting = Input.is_action_pressed("shoot")
 
 func lose_oxygen():
 	if Global.oxygen_level > 0:
@@ -103,9 +126,19 @@ func death_when_refueling_while_full() -> void:
 		death()
 
 func death():
+	instance_player_piece()
 	SoundManager.play_sound(DeathSound)
 	GameEvent.emit_signal("pause_enemies", true)
 	GameEvent.emit_signal("game_over")
+
+func instance_player_piece():
+	for i in range(PIECE_COUNT):
+		var piece_instance = ObjectPiece.instantiate()
+		piece_instance.hframes = PIECE_COUNT
+		piece_instance.frame = i
+		piece_instance.texture = PieceTexture
+		get_tree().current_scene.add_child(piece_instance)
+		piece_instance.global_position = global_position
 
 func move_to_shore_line():
 	var move_speed = OXYGEN_REFUEL_MOVE_SPEED * get_process_delta_time()
@@ -139,6 +172,7 @@ func _full_crew_oxygen_refuel() -> void:
 	decrease_people_timer.start()
 	death_when_refueling_while_full()
 	GameEvent.emit_signal("pause_enemies", true)
+	GameEvent.emit_signal("kill_all_enemies")
 
 func _on_decrease_people_timer_timeout() -> void:
 	remove_one_person()
