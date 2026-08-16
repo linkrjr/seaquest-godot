@@ -47,6 +47,7 @@ func spawn_enemy() -> void:
 		
 # Events
 func _on_spawn_enemy_timer_timeout() -> void:
+	if Global.first_load: return
 	#while len(spawned) < 4:
 	for i in range(4):
 		spawn_enemy()
@@ -58,6 +59,8 @@ func _on_spawn_enemy_timer_timeout() -> void:
 			#spawned.erase(key)
 
 func _on_spawn_player_timer_timeout() -> void:
+	if Global.first_load: return
+	
 	var person_instance = Person.instantiate()
 	get_tree().current_scene.add_child(person_instance)
 	
@@ -77,7 +80,7 @@ func _on_spawn_player_timer_timeout() -> void:
 	
 	
 func _pause(pause) -> void:
-	if pause:
+	if pause or Global.first_load:
 		spawn_enemy_timer.stop()
 		spawn_person_timer.stop()
 	else:
