@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="SeaQuest"
-run/main_scene="uid://cmrpmp88veu66"
+run/main_scene="uid://cjqyn7f2763c1"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]

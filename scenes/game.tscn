@@ -200,32 +200,27 @@ text = "Game Over!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="UserInterface/GameOver" unique_id=1732588047]
+[node name="VBoxContainer2" type="VBoxContainer" parent="UserInterface/GameOver" unique_id=443267497]
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_top = 10.0
-offset_bottom = 33.0
+offset_top = -10.0
+offset_bottom = 10.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="ScoreLabel" type="Label" parent="UserInterface/GameOver/VBoxContainer2" unique_id=1732588047]
+layout_mode = 2
 theme_override_fonts/font = ExtResource("9_0tnpc")
 theme_override_font_sizes/font_size = 8
 text = "Score 100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HighScoreLabel" type="Label" parent="UserInterface/GameOver" unique_id=886626410]
-layout_mode = 1
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = 10.0
-offset_bottom = 60.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="HighScoreLabel" type="Label" parent="UserInterface/GameOver/VBoxContainer2" unique_id=886626410]
+layout_mode = 2
 theme_override_fonts/font = ExtResource("9_0tnpc")
 theme_override_font_sizes/font_size = 8
 text = "HighScore 100"
@@ -235,5 +230,35 @@ vertical_alignment = 1
 [node name="GameOverDelay" type="Timer" parent="UserInterface/GameOver" unique_id=1174853543]
 wait_time = 0.5
 
+[node name="VBoxContainer" type="VBoxContainer" parent="UserInterface/GameOver" unique_id=402917408]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -44.0
+offset_top = -44.0
+offset_right = 44.0
+offset_bottom = -11.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 1
+
+[node name="PlayButton" type="Button" parent="UserInterface/GameOver/VBoxContainer" unique_id=197468636]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("9_0tnpc")
+theme_override_font_sizes/font_size = 8
+text = "Play Again"
+
+[node name="BackButton" type="Button" parent="UserInterface/GameOver/VBoxContainer" unique_id=1279304479]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("9_0tnpc")
+theme_override_font_sizes/font_size = 8
+text = "Menu
+"
+
 [connection signal="area_entered" from="OxygenZone" to="OxygenZone" method="_on_area_entered"]
 [connection signal="timeout" from="UserInterface/GameOver/GameOverDelay" to="UserInterface/GameOver" method="_on_game_over_delay_timeout"]
+[connection signal="pressed" from="UserInterface/GameOver/VBoxContainer/PlayButton" to="UserInterface/GameOver" method="_on_play_button_pressed"]
+[connection signal="pressed" from="UserInterface/GameOver/VBoxContainer/BackButton" to="UserInterface/GameOver" method="_on_back_button_pressed"]

@@ -1,7 +1,7 @@
 extends Control
 
-@onready var score_label = $ScoreLabel
-@onready var higscore_label = $HighScoreLabel
+@onready var score_label = $VBoxContainer2/ScoreLabel
+@onready var higscore_label = $VBoxContainer2/HighScoreLabel
 @onready var game_over_delay = $GameOverDelay
 
 const GameOverSound = preload("res://player/game_over.ogg")
@@ -10,10 +10,10 @@ func _ready() -> void:
 	GameEvent.connect("game_over", Callable(self, "_game_over"))
 	visible = false
 	
-func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("shoot") and visible:
-		Global.reset()
-		get_tree().reload_current_scene()	
+#func _process(delta: float) -> void:
+	#if Input.is_action_just_pressed("shoot") and visible:
+		#Global.reset()
+		#get_tree().reload_current_scene()	
 	
 func _game_over() -> void:
 	game_over_delay.start()
@@ -25,3 +25,10 @@ func _on_game_over_delay_timeout() -> void:
 	visible = true
 	SoundManager.play_sound(GameOverSound)
 	game_over_delay.stop()
+
+func _on_play_button_pressed() -> void:
+	Global.reset()
+	get_tree().reload_current_scene()	
+
+func _on_back_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/menu/main_menu.tscn")
