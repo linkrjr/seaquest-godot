@@ -9,6 +9,13 @@ This game is a modernized take on Seaquest, Activision’s classic 1983 Atari ti
 
 This was implemented in <a href="https://godotengine.org/">Godot</a>, written in <a href="https://gdscript.com/">GDScript</a>
 
+## About the Project
+- Engine: Godot 4.4.1
+- Language: GDScript
+
 <p align="center">
   <img src="images/screenshot.png" />
 </p>
+
+## License
+This project is only meant a study material
