@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://ditmuj2x4aefv"
+path="res://.godot/imported/lieutenant.dialogue-9d93f69d2f03fc36b46e9bdbb7c0aa31.tres"
+
+[deps]
+
+source_file="res://dialogues/lieutenant.dialogue"
+dest_files=["res://.godot/imported/lieutenant.dialogue-9d93f69d2f03fc36b46e9bdbb7c0aa31.tres"]
+
+[params]
+
+defaults=true

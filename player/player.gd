@@ -4,8 +4,8 @@ var velocity = Vector2(0, 0)
 var can_shoot = true
 var is_shooting = false
 
-enum STATES {DEFAULT, OXYGEN_REFUEL, PEOPLE_REFUEL}
-var state = STATES.DEFAULT
+enum STATES {DIALOGUE, DEFAULT, OXYGEN_REFUEL, PEOPLE_REFUEL}
+var state = STATES.DIALOGUE
 
 const ROTATION_STRENGTH = 15
 
@@ -34,10 +34,21 @@ const OxygenFullSound = preload("res://user_interface/oxygen-bar/full_oxygen_ale
 @onready var reload_timer = $ReloadTimer
 @onready var decrease_people_timer = $DecreasePeopleTimer
 
+var dialogue = load("res://dialogues/lieutenant.dialogue")
+
+
 func _ready() -> void:
 	GameEvent.connect("full_crew_oxygen_refuel", Callable(self, "_full_crew_oxygen_refuel"))
 	GameEvent.connect("less_people_oxygen_refuel", Callable(self, "_less_people_oxygen_refuel"))
 	GameEvent.connect("game_over", Callable(self, "_game_over"))
+	DialogueManager.connect("dialogue_ended", Callable(self, "_dialogue_ended"))
+	
+	if state == STATES.DIALOGUE:
+		DialogueManager.show_dialogue_balloon_scene("res://dialogues/balloon.tscn", dialogue, "start")
+		
+func _dialogue_ended(resource):
+	Global.first_load = false
+	state = STATES.DEFAULT
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
