@@ -42,10 +42,12 @@ func _ready() -> void:
 	GameEvent.connect("less_people_oxygen_refuel", Callable(self, "_less_people_oxygen_refuel"))
 	GameEvent.connect("game_over", Callable(self, "_game_over"))
 	DialogueManager.connect("dialogue_ended", Callable(self, "_dialogue_ended"))
-	
-	if state == STATES.DIALOGUE:
+
+	if Global.first_load and state == STATES.DIALOGUE:
 		DialogueManager.show_dialogue_balloon_scene("res://dialogues/balloon.tscn", dialogue, "start")
-		
+	else:
+		state = STATES.DEFAULT
+
 func _dialogue_ended(resource):
 	Global.first_load = false
 	state = STATES.DEFAULT
@@ -55,27 +57,27 @@ func _process(delta: float) -> void:
 	if state == STATES.DEFAULT:
 		process_moviment_input()
 		direction_follows_input()
-		process_shooting()	
+		process_shooting()
 		lose_oxygen()
-		death_when_oxygen_reaches_zero()		
+		death_when_oxygen_reaches_zero()
 	elif state == STATES.OXYGEN_REFUEL:
 		oxygen_refuel()
 		move_to_shore_line()
 	elif state == STATES.PEOPLE_REFUEL:
 		move_to_shore_line()
-		
+
 func _physics_process(delta: float) -> void:
 	if state == STATES.DEFAULT:
 		movement()
 		rotate_to_movement()
-	
+
 	clamp_moviment()
 	GameEvent.emit_signal("camera_follow_player", global_position.y)
-	
+
 func process_moviment_input():
 	velocity.x = Input.get_axis("move_left", "move_right")
 	velocity.y = Input.get_axis("move_up", "move_down")
-	velocity = velocity.normalized()	
+	velocity = velocity.normalized()
 
 func direction_follows_input():
 	if is_shooting:	return
@@ -83,10 +85,10 @@ func direction_follows_input():
 		sprite.flip_h = true
 	elif velocity.x > 0:
 		sprite.flip_h = false
-		
+
 func rotate_to_movement():
 	var rotation_target = 0
-	
+
 	if velocity.y == 0:
 		rotation_target = velocity.x * ROTATION_STRENGTH
 	else:
@@ -94,22 +96,22 @@ func rotate_to_movement():
 			rotation_target = -velocity.y * ROTATION_STRENGTH
 		else:
 			rotation_target = velocity.y * ROTATION_STRENGTH
-	
+
 	rotation_degrees = lerp(rotation_degrees, rotation_target, 15 * get_physics_process_delta_time())
-	
-func process_shooting():	
+
+func process_shooting():
 	if Input.is_action_pressed("shoot") and can_shoot:
 		var bullet_instance = Bullet.instantiate()
 		get_tree().current_scene.add_child(bullet_instance)
-		
+
 		SoundManager.play_sound(SoundShoot)
-		
+
 		if sprite.flip_h:
 			bullet_instance.global_position = global_position - Vector2(BULLET_OFFSET, 0)
 			bullet_instance.flip_direction()
 		else:
 			bullet_instance.global_position = global_position + Vector2(BULLET_OFFSET, 0)
-		
+
 		can_shoot = false
 		reload_timer.start()
 
@@ -117,17 +119,17 @@ func process_shooting():
 
 func lose_oxygen():
 	if Global.oxygen_level > 0:
-		Global.oxygen_level = move_toward(Global.oxygen_level, 0, OXYGEN_DECREASE_SPEED * get_process_delta_time()) 
-	
+		Global.oxygen_level = move_toward(Global.oxygen_level, 0, OXYGEN_DECREASE_SPEED * get_process_delta_time())
+
 func oxygen_refuel():
 	Global.oxygen_level += OXYGEN_INCREASE_SPEED * get_process_delta_time()
-	
+
 	if Global.oxygen_level > 99:
 		GameEvent.emit_signal("pause_enemies", false)
 		SoundManager.play_sound(OxygenFullSound)
 		sprite.play("default")
 		state = STATES.DEFAULT
-		
+
 func death_when_oxygen_reaches_zero() -> void:
 	if Global.oxygen_level <= 0:
 		death()
@@ -154,10 +156,10 @@ func instance_player_piece():
 func move_to_shore_line():
 	var move_speed = OXYGEN_REFUEL_MOVE_SPEED * get_process_delta_time()
 	global_position.y = move_toward(global_position.y, OXYGEN_REFUEL_Y_POSITION, move_speed)
-			
+
 func movement():
-	global_position += velocity * SPEED * get_physics_process_delta_time()	
-	
+	global_position += velocity * SPEED * get_physics_process_delta_time()
+
 func clamp_moviment():
 	global_position.x = clamp(global_position.x, MIN_X_POSITION, MAX_X_POSITION)
 	global_position.y = clamp(global_position.y, MIN_Y_POSITION, MAX_Y_POSITION)
@@ -169,14 +171,14 @@ func remove_one_person():
 
 func _on_reload_timer_timeout() -> void:
 	can_shoot = true
-	
+
 func _less_people_oxygen_refuel() -> void:
 	state = STATES.OXYGEN_REFUEL
 	sprite.play("flash")
 	remove_one_person()
 	death_when_refueling_while_full()
 	GameEvent.emit_signal("pause_enemies", true)
-	
+
 func _full_crew_oxygen_refuel() -> void:
 	state = STATES.PEOPLE_REFUEL
 	sprite.play("flash")
@@ -187,10 +189,10 @@ func _full_crew_oxygen_refuel() -> void:
 
 func _on_decrease_people_timer_timeout() -> void:
 	remove_one_person()
-	
+
 	if Global.saved_people_count <= 0:
 		state = STATES.OXYGEN_REFUEL
 		decrease_people_timer.stop()
-		
+
 func _game_over() -> void:
 	queue_free()
