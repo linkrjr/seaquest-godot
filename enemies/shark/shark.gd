@@ -28,22 +28,22 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if state == "default":
 		velocity.y = sin(global_position.x * MOVIMENT_FREQUENCY) * MOVIMENT_AMPLITUDE
-		global_position += velocity * SPEED * delta	
+		global_position += velocity * SPEED * delta
 
 func _on_area_entered(area: Area2D) -> void:
 	if area.is_in_group("PlayerBullet"):
 		area.queue_free()
 		_death()
-		
+
 	if area.is_in_group("player"):
 		area.death()
-		
-func instance_point_value_popup():	
+
+func instance_point_value_popup():
 	var popup_instance = PointValuePopup.instantiate()
 	popup_instance.value = POINTS_VALUE
 	get_tree().current_scene.add_child(popup_instance)
 	popup_instance.global_position = global_position
-		
+
 func instance_death_piece():
 	for i in range(PIECE_COUNT):
 		var piece_instance = ObjectPiece.instantiate()
@@ -59,11 +59,11 @@ func _death():
 	instance_point_value_popup()
 	Global.update_points(POINTS_VALUE)
 	queue_free()
-	
+
 
 func _pause(pause) -> void:
 	print("pause enemy? " + str(pause))
-	
+
 	if pause:
 		state = "paused"
 	else:

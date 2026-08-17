@@ -13,6 +13,7 @@ config_version=5
 config/name="SeaQuest"
 run/main_scene="uid://cjqyn7f2763c1"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="uid://dopou733fkibb"
 
 [autoload]
 
