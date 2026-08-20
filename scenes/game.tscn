@@ -109,7 +109,6 @@ texture = ExtResource("6_trtic")
 position = Vector2(6, 7)
 
 [node name="OxygenBar" type="Node2D" parent="UserInterface" unique_id=411153676]
-visible = false
 position = Vector2(128, 127)
 script = ExtResource("4_p57ef")
 
